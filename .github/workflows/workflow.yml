@@ -27,3 +27,24 @@ jobs:
 
       - name: Run tests
         run: ./gradlew test
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-west-2
+
+      - name: SSH into EC2 instance
+        uses: appleboy/ssh-action@v0.1.9
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          port: ${{ secrets.EC2_SSH_PORT }}
+          script: |
+            cd /path/to/deploy/dir
+            sudo systemctl stop myservice
+            rm -rf *
+            scp -i /path/to/private_key /path/to/build/*.jar .
+            sudo systemctl start myservice  
