@@ -42,9 +42,4 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           port: ${{ secrets.EC2_SSH_PORT }}
-          script: |
-            cd /path/to/deploy/dir
-            sudo systemctl stop myservice
-            rm -rf *
-            scp -i /path/to/private_key /path/to/build/*.jar .
-            sudo systemctl start myservice  
+          script: echo hello world > hello.txt
