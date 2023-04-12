@@ -7,4 +7,5 @@ pluginManagement {
 }
 rootProject.name = 'chatgpt-keycloak'
 include 'database-design-test'
+include 'Auth'
 
