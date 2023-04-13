@@ -1,4 +1,4 @@
-name: Pipeline for chagpt code
+name: Pipeline for chatgpt code
 
 on:
   push:
