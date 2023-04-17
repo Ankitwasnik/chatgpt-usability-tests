@@ -60,8 +60,8 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
-          source: "build/libs/my-artifact.jar"
-          target: "/home/ubuntu/my-artifact.jar"
+          source: "database-design-test/build/libs/database-design-test-0.0.1-SNAPSHOT.jar"
+          target: "/home/ubuntu/database-design-test-0.0.1-SNAPSHOT.jar"
 
       - name: Deploy application on EC2
         uses: appleboy/ssh-action@v0.1.9
@@ -72,5 +72,5 @@ jobs:
           port: ${{ secrets.EC2_SSH_PORT }}
           script: |
             sudo systemctl stop my-app.service
-            sudo mv /home/ubuntu/my-artifact.jar /usr/local/my-app/
+            sudo mv /home/ubuntu/database-design-test-0.0.1-SNAPSHOT.jar /usr/local/my-app/
             sudo systemctl start my-app.service
