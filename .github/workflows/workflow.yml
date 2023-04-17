@@ -14,16 +14,21 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Build and package
-        run: |
-          ./gradlew build
-          ./gradlew assemble
-
       - name: Set up Java 17
         uses: actions/setup-java@v3
         with:
           java-version: '17'
           distribution: 'adopt'
+
+      - name: Build project
+        run: ./gradlew build
+
+      - name: Run tests
+        run: ./gradlew test
+
+      - name: Package
+        run: |
+          ./gradlew assemble
 
       - name: Upload artifact
         uses: actions/upload-artifact@v2
@@ -42,18 +47,19 @@ jobs:
           name: my-artifact
           path: build/libs/
 
-      - name: Install ssh key
-        uses: shimataro/ssh-key-action@v2
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
         with:
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          name: my-ssh-key
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-west-2
 
       - name: Copy artifact to EC2
         uses: appleboy/scp-action@v2
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          key: ${{ secrets.EC2_SSH_KEY }}
           source: "build/libs/my-artifact.jar"
           target: "/home/ubuntu/my-artifact.jar"
 
@@ -62,8 +68,8 @@ jobs:
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: ${{ secrets.SSH_PORT }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          port: ${{ secrets.EC2_SSH_PORT }}
           script: |
             sudo systemctl stop my-app.service
             sudo mv /home/ubuntu/my-artifact.jar /usr/local/my-app/
